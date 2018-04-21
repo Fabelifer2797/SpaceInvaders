@@ -5,7 +5,7 @@ import java.awt.Image;
 
 public class Dibujo_imagen {
 	
-	Image imagen;
+	public Image imagen;
 	
 	public Dibujo_imagen(Image imagen) 
         {
