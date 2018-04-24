@@ -18,8 +18,12 @@ public abstract class HileraEnemigos {
 	public abstract void AgregarMisil(Misil misil);
 	public abstract void DibujarHileras(Graphics G2D);
 	public abstract void VerificarColisiones();
-	public abstract void DescontarEliminados(ArrayList<Graficos> listaEliminados);
+	public abstract void DescontarEliminados(ArrayList<Graficos> listaEliminados, SpaceInvaders Juego);
 	public abstract void EliminarLista();
 	public abstract void DescontarNumeroAliens(SpaceInvaders Juego);
+	public abstract void CorrerAlCentro(Graficos AlienEliminado);
+	public abstract void RestablecerValorDesCol();
+	public abstract void GenerarIntercambioJefe(SpaceInvaders Juego);
+	public abstract void GenerarMovimientoReloj();
 
 }

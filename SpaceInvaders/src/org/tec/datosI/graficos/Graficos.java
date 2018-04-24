@@ -15,6 +15,7 @@ public abstract class Graficos {
 	public int ID;
 	public Rectangle grafico1 = new Rectangle();
 	public Rectangle grafico2 = new Rectangle();
+	public boolean corrimiento;
 	
 	public Graficos(String imagen,int columna,int fila) 
 	{
@@ -23,6 +24,7 @@ public abstract class Graficos {
 		this.fila = fila;
 		this.ID = contador;
 		contador++;
+		corrimiento = false;
 	}
 	
 	public int getID() {

@@ -120,7 +120,7 @@ public class ListaDoble <T> extends ListaGeneral<T>{
 		{
 			if(actual.getValor().equals(Valor))
 			{
-				System.out.println("Elemento " + Valor.toString() + " encontrado");
+				//System.out.println("Elemento " + Valor.toString() + " encontrado");
 				return actual;
 			}
 			
@@ -130,7 +130,7 @@ public class ListaDoble <T> extends ListaGeneral<T>{
 			}
 		}
 		
-		System.out.println("Elemento " + Valor.toString() + " no encontrado");
+		//System.out.println("Elemento " + Valor.toString() + " no encontrado");
 		return null;
 	}
 	

@@ -18,7 +18,7 @@ public class Alien extends Graficos {
 		super(imagen,columna,fila);
 		this.juego = juego;
 		//Cambiar velocidad del juego
-		desplazamiento_columna = -300;
+		desplazamiento_columna = -200;
 		resistenciaJefe = 2 + numeroAleatorio.nextInt(4);
 		esJefe = false;
 		resistenciaAlien = 0;
@@ -46,6 +46,7 @@ public class Alien extends Graficos {
 
 		super.mover(valor);
 	}
+	
 
 
 	public void avanzar_aliens() 

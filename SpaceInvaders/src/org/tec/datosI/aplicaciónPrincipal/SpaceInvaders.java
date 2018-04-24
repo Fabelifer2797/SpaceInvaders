@@ -40,9 +40,13 @@ public class SpaceInvaders extends Canvas {
 	public boolean flecha_derecha_pulsada = false;
 	public boolean disparado= false;
 	public boolean alcanzado_limite = false;	
-	public int numeroHileraActual = 4;	
+	public int numeroHileraActual = 5;	
 	public int numeroHileraSiguiente = 0;	
 	Random aleatorio = new Random(System.currentTimeMillis());
+	public int contadorCambio = 0;
+	public int contadorCambio2 = 0;
+	public boolean movimientoReloj = false;
+	public boolean alcanzadoLimiteRelojC = false;
 
 
 
@@ -170,9 +174,26 @@ public class SpaceInvaders extends Canvas {
 				hileraActual.GenerarMovimientoColumnas(valor);
 			}
 			
+			
 			hileraActual.DibujarHileras(G2D);
+			
+			
+			if(contadorCambio == 150) {
+				
+				hileraActual.GenerarIntercambioJefe(this);
+				contadorCambio = 0;
+				
+			}
+			contadorCambio++;
+			
+			if(contadorCambio2 == 7) {
+				hileraActual.GenerarMovimientoReloj();
+				contadorCambio2 = 0;
+			}
+			contadorCambio2++;
+			hileraActual.RestablecerValorDesCol();
 			hileraActual.VerificarColisiones();
-			hileraActual.DescontarEliminados(lista_eliminados);
+			hileraActual.DescontarEliminados(lista_eliminados, this);
 			lista_eliminados.clear();
 
 			if (alcanzado_limite) 

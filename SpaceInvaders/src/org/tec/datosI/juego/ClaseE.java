@@ -2,8 +2,6 @@ package org.tec.datosI.juego;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.Random;
-
 import org.tec.datosI.aplicaciónPrincipal.SpaceInvaders;
 import org.tec.datosI.graficos.Graficos;
 import org.tec.datosI.listasEnlazadas.ListaDobleCircular;
@@ -14,29 +12,39 @@ public class ClaseE extends HileraEnemigos {
 	
 	private int ID = 5;
 	private ListaGeneral<Graficos> listaClaseE = new ListaDobleCircular<Graficos>();
-	private Random posicionJefe = new Random(System.currentTimeMillis());
+	private ListaGeneral<Graficos> listaPosiciones = new ListaDobleCircular<Graficos>();
+	private Graficos referenciaJefe;
+	private int contadorVueltas = 1;
+	private int contadorCiclos = 1;
+	double[] horizontal = {0,-240,0,-160,0,-80,0,80,0,160,0,240};
+	double[] vertical = {-160,0,-105,0,-50,0,50,0,105,0,160,0};
+	double[] diagonal1 =  {-130,-240,-90,-160,-50,-80,50,80,90,160,130,240};
+	double[] diagonal2 = {-130,240,-90,160,-50,80,50,-80,90,-160,130,-240};
+	
 
 	@Override
 	public void CrearHilera(Graficos Nave, String Alien, String Jefe, SpaceInvaders Juego) {
 		
-		int posicion = posicionJefe.nextInt(8);
+		int posicion = 3;
 		listaClaseE.InsertarFinalLista(Nave, "N");
 		
 		for (int f = 0; f < 1; f++) 
 		{
-			for (int c = 0; c < 8; c++) 
+			for (int c = 0; c < 7; c++) 
 			{
 				if(c == posicion) {
-					Graficos alien = new Alien(Juego,Jefe,70 + (c * 80),(50) + f * 30);
+					Graficos alien = new Alien(Juego,Jefe,70 + (c * 80),(150) + f * 30);
 					alien.setJefe();
 					listaClaseE.InsertarFinalLista(alien,"J");
+					referenciaJefe = new Alien(Juego,Jefe,70 + (c * 80),(150) + f * 30);
 					Juego.num_aliens++;
 				}
 				
 				else {
 					
-					Graficos alien = new Alien(Juego,Alien,70 + (c * 80),(50) + f * 30);
+					Graficos alien = new Alien(Juego,Alien,70 + (c * 80),(150) + f * 30);
 					listaClaseE.InsertarFinalLista(alien,"A");
+					listaPosiciones.InsertarFinalLista(alien, "A");
 					Juego.num_aliens++;
 					
 				}
@@ -60,6 +68,7 @@ public class ClaseE extends HileraEnemigos {
 		}
 		
 		actual.getValor().mover(Valor);
+		referenciaJefe.mover(Valor);
 		
 	}
 
@@ -76,6 +85,7 @@ public class ClaseE extends HileraEnemigos {
 		}
 		
 		actual.getValor().avanzar_aliens();
+		referenciaJefe.avanzar_aliens();
 		
 	}
 
@@ -150,7 +160,7 @@ public class ClaseE extends HileraEnemigos {
 	}
 
 	@Override
-	public void DescontarEliminados(ArrayList<Graficos> listaEliminados) {
+	public void DescontarEliminados(ArrayList<Graficos> listaEliminados, SpaceInvaders Juego) {
 		
 		NodoLista<Graficos> actual = this.getLista().getPrimero();
 		int Contador = 0;
@@ -203,7 +213,7 @@ public class ClaseE extends HileraEnemigos {
 			
 			if(grafico instanceof Alien) {
 				
-				grafico.desplazamiento_columna = grafico.desplazamiento_columna * 1.02;
+				//grafico.desplazamiento_columna = grafico.desplazamiento_columna * 1.02;
 				
 			}
 			
@@ -220,5 +230,314 @@ public class ClaseE extends HileraEnemigos {
 		}
 		
 	}
+
+	@Override
+	public void CorrerAlCentro(Graficos AlienEliminado) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void RestablecerValorDesCol() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void GenerarIntercambioJefe(SpaceInvaders Juego) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void GenerarMovimientoReloj() {
+		
+		double filaJefe = referenciaJefe.fila;
+		double columnaJefe = referenciaJefe.columna;
+		
+		if(this.contadorVueltas == 1) {
+			
+			if(this.contadorCiclos == 1) {
+				
+				NodoLista<Graficos> actual = this.listaPosiciones.getPrimero();
+				int contadorBucle = 0;
+				int contadorFila = 0;
+				int contadorColumna = 1;
+				
+				while(contadorBucle < this.listaPosiciones.ObtenerTamañoLista()) {
+					
+					NodoLista<Graficos> alien = this.getLista().BuscarLista(actual.getValor());
+					
+					if(alien == null) {
+						
+						actual = actual.getSiguiente();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+					else {
+						alien.getValor().fila = filaJefe + (this.horizontal[contadorFila]);
+						alien.getValor().columna = columnaJefe + (this.horizontal[contadorColumna]);
+						actual = actual.getSiguiente();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+				}
+				
+				this.contadorCiclos++;
+			}
+			
+			else if(this.contadorCiclos == 2) {
+				
+				NodoLista<Graficos> actual = this.listaPosiciones.getPrimero();
+				int contadorBucle = 0;
+				int contadorFila = 0;
+				int contadorColumna = 1;
+				
+				while(contadorBucle < this.listaPosiciones.ObtenerTamañoLista()) {
+					
+					NodoLista<Graficos> alien = this.getLista().BuscarLista(actual.getValor());
+					
+					if(alien == null) {
+						
+						actual = actual.getSiguiente();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+					else {
+						alien.getValor().fila = filaJefe + (this.diagonal1[contadorFila]);
+						alien.getValor().columna = columnaJefe + (this.diagonal1[contadorColumna]);
+						actual = actual.getSiguiente();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+				}
+				
+				this.contadorCiclos++;
+			}
+			
+			else if(this.contadorCiclos == 3) {
+				
+				NodoLista<Graficos> actual = this.listaPosiciones.getPrimero();
+				int contadorBucle = 0;
+				int contadorFila = 0;
+				int contadorColumna = 1;
+				
+				while(contadorBucle < this.listaPosiciones.ObtenerTamañoLista()) {
+					
+					NodoLista<Graficos> alien = this.getLista().BuscarLista(actual.getValor());
+					
+					if(alien == null) {
+						
+						actual = actual.getSiguiente();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+					else {
+						alien.getValor().fila = filaJefe + (this.vertical[contadorFila]);
+						alien.getValor().columna = columnaJefe + (this.vertical[contadorColumna]);
+						actual = actual.getSiguiente();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+				}
+				
+				this.contadorCiclos++;
+			}
+			
+			else {
+				
+				NodoLista<Graficos> actual = this.listaPosiciones.getPrimero();
+				int contadorBucle = 0;
+				int contadorFila = 0;
+				int contadorColumna = 1;
+				
+				while(contadorBucle < this.listaPosiciones.ObtenerTamañoLista()) {
+					
+					NodoLista<Graficos> alien = this.getLista().BuscarLista(actual.getValor());
+					
+					if(alien == null) {
+						
+						actual = actual.getSiguiente();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+					else {
+						alien.getValor().fila = filaJefe + (this.diagonal2[contadorFila]);
+						alien.getValor().columna = columnaJefe + (this.diagonal2[contadorColumna]);
+						actual = actual.getSiguiente();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+				}
+				
+				this.contadorCiclos = 1;
+				this.contadorVueltas++;
+				
+			}
+			
+			
+			
+			
+		}
+		
+		else {
+			
+			if(this.contadorCiclos == 1) {
+				
+				NodoLista<Graficos> actual = this.listaPosiciones.getPrimero().getAnterior();
+				int contadorBucle = 0;
+				int contadorFila = 0;
+				int contadorColumna = 1;
+				
+				while(contadorBucle < this.listaPosiciones.ObtenerTamañoLista()) {
+					
+					NodoLista<Graficos> alien = this.getLista().BuscarLista(actual.getValor());
+					
+					if(alien == null) {
+						
+						actual = actual.getAnterior();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+					else {
+						alien.getValor().fila = filaJefe + (this.horizontal[contadorFila]);
+						alien.getValor().columna = columnaJefe + (this.horizontal[contadorColumna]);
+						actual = actual.getAnterior();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+				}
+				
+				this.contadorCiclos++;
+			}
+			
+			else if(this.contadorCiclos == 2) {
+				
+				NodoLista<Graficos> actual = this.listaPosiciones.getPrimero().getAnterior();
+				int contadorBucle = 0;
+				int contadorFila = 0;
+				int contadorColumna = 1;
+				
+				while(contadorBucle < this.listaPosiciones.ObtenerTamañoLista()) {
+					
+					NodoLista<Graficos> alien = this.getLista().BuscarLista(actual.getValor());
+					
+					if(alien == null) {
+						
+						actual = actual.getAnterior();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+					else {
+						alien.getValor().fila = filaJefe + (this.diagonal1[contadorFila]);
+						alien.getValor().columna = columnaJefe + (this.diagonal1[contadorColumna]);
+						actual = actual.getAnterior();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+				}
+				
+				this.contadorCiclos++;
+			}
+			
+			else if(this.contadorCiclos == 3) {
+				
+				NodoLista<Graficos> actual = this.listaPosiciones.getPrimero().getAnterior();
+				int contadorBucle = 0;
+				int contadorFila = 0;
+				int contadorColumna = 1;
+				
+				while(contadorBucle < this.listaPosiciones.ObtenerTamañoLista()) {
+					
+					NodoLista<Graficos> alien = this.getLista().BuscarLista(actual.getValor());
+					
+					if(alien == null) {
+						
+						actual = actual.getAnterior();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+					else {
+						alien.getValor().fila = filaJefe + (this.vertical[contadorFila]);
+						alien.getValor().columna = columnaJefe + (this.vertical[contadorColumna]);
+						actual = actual.getAnterior();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+				}
+				
+				this.contadorCiclos++;
+			}
+			
+			else {
+				
+				NodoLista<Graficos> actual = this.listaPosiciones.getPrimero().getAnterior();
+				int contadorBucle = 0;
+				int contadorFila = 0;
+				int contadorColumna = 1;
+				
+				while(contadorBucle < this.listaPosiciones.ObtenerTamañoLista()) {
+					
+					NodoLista<Graficos> alien = this.getLista().BuscarLista(actual.getValor());
+					
+					if(alien == null) {
+						
+						actual = actual.getAnterior();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+					else {
+						alien.getValor().fila = filaJefe + (this.diagonal2[contadorFila]);
+						alien.getValor().columna = columnaJefe + (this.diagonal2[contadorColumna]);
+						actual = actual.getAnterior();
+						contadorBucle++;
+						contadorFila += 2;
+						contadorColumna += 2;
+					}
+					
+				}
+				
+				this.contadorCiclos = 1;
+				this.contadorVueltas = 1;
+				
+			}
+		}
+		
+		
+		
+		
+	}
+
 
 }

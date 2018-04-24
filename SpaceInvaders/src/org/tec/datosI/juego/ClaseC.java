@@ -153,7 +153,7 @@ public class ClaseC  extends HileraEnemigos{
 	}
 
 	@Override
-	public void DescontarEliminados(ArrayList<Graficos> listaEliminados) {
+	public void DescontarEliminados(ArrayList<Graficos> listaEliminados, SpaceInvaders Juego) {
 		
 		NodoLista<Graficos> actual = this.getLista().getPrimero();
 		int Contador = 0;
@@ -167,7 +167,14 @@ public class ClaseC  extends HileraEnemigos{
 				
 				if(grafico.getID() == actual.getValor().getID()) {
 					
-					this.getLista().EliminarLista(grafico);
+					if(Juego.num_aliens == 0) {
+						this.getLista().EliminarLista(grafico);
+					}
+					
+					else {
+						this.CorrerAlCentro(grafico);
+						this.getLista().EliminarLista(grafico);
+					}
 					
 				}
 				
@@ -222,6 +229,82 @@ public class ClaseC  extends HileraEnemigos{
 			grafico.desplazamiento_columna = grafico.desplazamiento_columna * 1.02;
 			
 		}
+		
+	}
+
+
+	@Override
+	public void CorrerAlCentro(Graficos AlienEliminado) {
+		
+		double columnaEliminar = AlienEliminado.columna;
+		NodoLista<Graficos> actual = this.getLista().getPrimero();
+		int Contador = 0;
+		
+		while(Contador < this.getLista().ObtenerTamañoLista()) {
+			
+			if(actual.getCode() == "A" || actual.getCode() == "J") {
+				
+				if(actual.getValor().columna < columnaEliminar && actual.getValor().desplazamiento_columna < 0) {
+					
+					actual.getValor().columna += 40;
+					actual.getValor().corrimiento = true;
+				}
+				
+				else if(actual.getValor().columna > columnaEliminar && actual.getValor().desplazamiento_columna < 0) {
+					
+					actual.getValor().columna -= 40;
+					
+				}
+				
+				else if(actual.getValor().columna > columnaEliminar && actual.getValor().desplazamiento_columna > 0) {
+					
+					actual.getValor().columna -= 40;
+					actual.getValor().corrimiento = true;
+				}
+				
+				else if(actual.getValor().columna < columnaEliminar && actual.getValor().desplazamiento_columna > 0) {
+					
+					actual.getValor().columna += 40;
+				}
+			}
+			
+			actual = actual.getSiguiente();
+			Contador++;
+			
+		}
+		
+	}
+
+	@Override
+	public void RestablecerValorDesCol() {
+		
+		NodoLista<Graficos> actual = this.getLista().getPrimero();
+		int Contador = 0;
+		
+		while(Contador < this.getLista().ObtenerTamañoLista()) {
+			
+			if(actual.getCode() == "A" || actual.getCode() == "J")
+			{
+				if(actual.getValor().corrimiento) {
+					
+					actual.getValor().corrimiento = false;
+				}
+			}
+			actual = actual.getSiguiente();
+			Contador++;
+		}
+		
+	}
+
+	@Override
+	public void GenerarIntercambioJefe(SpaceInvaders Juego) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void GenerarMovimientoReloj() {
+		// TODO Auto-generated method stub
 		
 	}
 
