@@ -8,11 +8,13 @@ import org.tec.datosI.graficos.Graficos;
 import org.tec.datosI.listasEnlazadas.ListaDoble;
 import org.tec.datosI.listasEnlazadas.ListaGeneral;
 import org.tec.datosI.listasEnlazadas.NodoLista;
+import org.tec.datosI.sound.Sound;
 
 public class ClaseBasic extends HileraEnemigos {
 	
 	private int ID = 0;
 	private ListaGeneral<Graficos> listaClaseBasic = new ListaDoble<Graficos>();
+	private Sound sonidoExplosion =  new Sound("/org/tec/datosI/sonidos/explosion.wav");
 	
 	@Override
 	public int getID() {
@@ -149,6 +151,13 @@ public class ClaseBasic extends HileraEnemigos {
 				
 				if(grafico.getID() == actual.getValor().getID()) {
 					
+					Juego.coorXE = actual.getValor().columna;
+					Juego.coorYE = actual.getValor().fila;
+					Juego.Explosion = true;
+					
+					if(!sonidoExplosion.isPlaying()) {
+						sonidoExplosion.play();
+					}
 					
 					if(Juego.num_aliens == 0) {
 						this.getLista().EliminarLista(grafico);
@@ -276,6 +285,13 @@ public class ClaseBasic extends HileraEnemigos {
 	public void GenerarMovimientoReloj() {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public Graficos getReferenciaJefe() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 

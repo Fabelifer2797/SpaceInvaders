@@ -2,7 +2,6 @@ package org.tec.datosI.control;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import org.tec.datosI.aplicaciónPrincipal.SpaceInvaders;
 
@@ -73,6 +72,7 @@ public class Teclado extends KeyAdapter {
 		{
 			if (pulsaciones == 1) 
 			{
+				
 				this.juego.tecla_no_pulsada = false;
 
 				this.juego.iniciar_juego();

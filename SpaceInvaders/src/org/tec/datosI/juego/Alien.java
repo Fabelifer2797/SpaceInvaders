@@ -13,6 +13,7 @@ public class Alien extends Graficos {
 	public int resistenciaJefe;
 	public int resistenciaAlien;
 
+
 	public Alien(SpaceInvaders juego,String imagen,int columna,int fila) 
 	{
 		super(imagen,columna,fila);
@@ -22,6 +23,7 @@ public class Alien extends Graficos {
 		resistenciaJefe = 2 + numeroAleatorio.nextInt(4);
 		esJefe = false;
 		resistenciaAlien = 0;
+
 	}
 	
 	@Override
@@ -55,10 +57,13 @@ public class Alien extends Graficos {
 
 		fila += 15;
 
+
 		if (fila >= 470) 
 		{
 			juego.notificar_perdedor();
 		}
+		
+
 	}
 
 

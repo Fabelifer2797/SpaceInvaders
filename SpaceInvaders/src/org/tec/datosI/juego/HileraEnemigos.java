@@ -25,5 +25,6 @@ public abstract class HileraEnemigos {
 	public abstract void RestablecerValorDesCol();
 	public abstract void GenerarIntercambioJefe(SpaceInvaders Juego);
 	public abstract void GenerarMovimientoReloj();
+	public abstract Graficos getReferenciaJefe();
 
 }

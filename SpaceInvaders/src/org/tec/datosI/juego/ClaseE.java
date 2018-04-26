@@ -7,6 +7,7 @@ import org.tec.datosI.graficos.Graficos;
 import org.tec.datosI.listasEnlazadas.ListaDobleCircular;
 import org.tec.datosI.listasEnlazadas.ListaGeneral;
 import org.tec.datosI.listasEnlazadas.NodoLista;
+import org.tec.datosI.sound.Sound;
 
 public class ClaseE extends HileraEnemigos {
 	
@@ -20,6 +21,7 @@ public class ClaseE extends HileraEnemigos {
 	double[] vertical = {-160,0,-105,0,-50,0,50,0,105,0,160,0};
 	double[] diagonal1 =  {-130,-240,-90,-160,-50,-80,50,80,90,160,130,240};
 	double[] diagonal2 = {-130,240,-90,160,-50,80,50,-80,90,-160,130,-240};
+	private Sound sonidoExplosion =  new Sound("/org/tec/datosI/sonidos/explosion.wav");
 	
 
 	@Override
@@ -173,6 +175,14 @@ public class ClaseE extends HileraEnemigos {
 				Graficos grafico = (Graficos) listaEliminados.get(i);
 				
 				if(grafico.getID() == actual.getValor().getID()) {
+					
+					Juego.coorXE = actual.getValor().columna;
+					Juego.coorYE = actual.getValor().fila;
+					Juego.Explosion = true;
+					
+					if(!sonidoExplosion.isPlaying()) {
+					sonidoExplosion.play();
+				}
 					
 					this.getLista().EliminarLista(grafico);
 					
@@ -537,6 +547,12 @@ public class ClaseE extends HileraEnemigos {
 		
 		
 		
+	}
+
+	@Override
+	public Graficos getReferenciaJefe() {
+		
+		return referenciaJefe;
 	}
 
 

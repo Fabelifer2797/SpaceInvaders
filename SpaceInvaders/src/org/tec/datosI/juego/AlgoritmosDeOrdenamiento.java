@@ -25,7 +25,7 @@ public class AlgoritmosDeOrdenamiento {
 				}
 			}
 		}
-		this.MostrarArreglo(Arreglo);
+		//this.MostrarArreglo(Arreglo);
 		return Arreglo;
 	}
 	

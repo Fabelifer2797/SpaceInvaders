@@ -3,17 +3,27 @@ package org.tec.datosI.aplicaciónPrincipal;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import org.tec.datosI.control.Teclado;
+import org.tec.datosI.graficos.BufferedImageLoader;
 import org.tec.datosI.graficos.Graficos;
+import org.tec.datosI.graficos.SpriteSheet;
 import org.tec.datosI.juego.ClaseA;
 import org.tec.datosI.juego.ClaseB;
 import org.tec.datosI.juego.Misil;
 import org.tec.datosI.juego.Nave_espacial;
+import org.tec.datosI.listasEnlazadas.ListaGeneral;
+import org.tec.datosI.listasEnlazadas.NodoLista;
+import org.tec.datosI.sound.Sound;
 import org.tec.datosI.juego.ClaseBasic;
 import org.tec.datosI.juego.ClaseC;
 import org.tec.datosI.juego.ClaseD;
@@ -40,15 +50,33 @@ public class SpaceInvaders extends Canvas {
 	public boolean flecha_derecha_pulsada = false;
 	public boolean disparado= false;
 	public boolean alcanzado_limite = false;	
-	public int numeroHileraActual = 5;	
+	public int numeroHileraActual = 0;	
 	public int numeroHileraSiguiente = 0;	
 	Random aleatorio = new Random(System.currentTimeMillis());
 	public int contadorCambio = 0;
 	public int contadorCambio2 = 0;
 	public boolean movimientoReloj = false;
 	public boolean alcanzadoLimiteRelojC = false;
-
-
+	public double cambioVelocidad = 0;
+	public Graficos fondo;
+	public BufferedImage spriteExplosion;
+	public BufferedImage explosion;
+	public SpriteSheet hojaSpritesE;
+	public int  contadorSprites = 0;
+	public int contadorExplosion = 1;
+	public double coorXE;
+	public double coorYE;
+	public boolean Explosion = false;
+	public Sound disparo = new Sound("/org/tec/datosI/sonidos/shoot.wav");
+	public Sound beep = new Sound("/org/tec/datosI/sonidos/beep.wav");
+	public Sound boop  = new Sound("/org/tec/datosI/sonidos/boop.wav");
+	private boolean beepboop;
+	private Font gameScreen = new Font("Arial", Font.PLAIN, 30);
+	private Font informacion = new Font("Arial",Font.PLAIN,15);
+	private int nivel = 1;
+	public int puntaje = 0;
+	private boolean titulo = true;
+	private static final ImageIcon icono = new ImageIcon(SpaceInvaders.class.getResource("/org/tec/datosI/imagenes/Icono.png"));
 
 	public SpaceInvaders() {
 
@@ -61,6 +89,7 @@ public class SpaceInvaders extends Canvas {
 		ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ventana.pack();
 		ventana.setLocationRelativeTo(null);
+		ventana.setIconImage(icono.getImage());
 		requestFocus();
 		Teclado teclado = new Teclado(this);
 		addKeyListener(teclado);
@@ -68,13 +97,26 @@ public class SpaceInvaders extends Canvas {
 		buffer = getBufferStrategy();
 		inicializarHileras();	
 		establecerHileraActual();		
-		añadir_Sprites();
+		añadir_Sprites(); 
+		fondo = new Nave_espacial(this, "/org/tec/datosI/imagenes/Fondo.jpg", 0,0);
+		BufferedImageLoader loader = new BufferedImageLoader();
+		
+		try {
+			spriteExplosion = loader.loadImage("/org/tec/datosI/imagenes/Explosion.png");
+			
+			
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+
 
 	}	
 	
 	
 	public void inicializarHileras() {
-		
+		lista_Hileras.clear();
 		HileraEnemigos claseBasic = new ClaseBasic();
 		HileraEnemigos claseA = new ClaseA();
 		HileraEnemigos claseB = new ClaseB();
@@ -106,15 +148,9 @@ public class SpaceInvaders extends Canvas {
 
 	public void iniciar_juego() {
 		
-		//numeroHileraActual = aleatorio.nextInt(6);
-		
-		//aleatorio.setSeed(System.currentTimeMillis());
-		
-		//numeroHileraSiguiente = aleatorio.nextInt(6);
-		
-		//aleatorio.setSeed(System.currentTimeMillis());
-		
-		//System.out.println(numeroHileraActual + "  ->  " + numeroHileraSiguiente);
+		numeroHileraActual = numeroHileraSiguiente;
+		numeroHileraSiguiente = aleatorio.nextInt(6);
+		System.out.println(numeroHileraActual + "  ->  " + numeroHileraSiguiente);
 		inicializarHileras();
 		establecerHileraActual();
 		hileraActual.EliminarLista();
@@ -122,7 +158,78 @@ public class SpaceInvaders extends Canvas {
 		flecha_izquierda_pulsada = false;
 		flecha_derecha_pulsada = false;
 		disparado = false;
+		cambiarVelocidadxNivel();
 	
+	}
+	
+	public void cambiarVelocidadxNivel() {
+		
+		if(nivel == 1) {
+			
+			cambioVelocidad = 0;
+		}
+		cambioVelocidad += 40;
+		
+		if(this.hileraActual.getID() == 5) {
+			
+			this.hileraActual.getReferenciaJefe().desplazamiento_columna -= cambioVelocidad;
+		}
+		
+		ListaGeneral<Graficos> listaActual = this.hileraActual.getLista();
+		NodoLista<Graficos> actual = listaActual.getPrimero();
+		int contador = 0;
+		
+		while (contador < listaActual.ObtenerTamañoLista()) {
+			
+			if(actual.getCode() == "A" || actual.getCode() == "J") {
+				
+				actual.getValor().desplazamiento_columna -= cambioVelocidad;
+				contador++;
+				actual = actual.getSiguiente();
+			}
+			
+			else {
+				
+				contador++;
+				actual = actual.getSiguiente();
+			}
+			
+		}
+		
+	}
+	
+	public String establecerMensajeHilera (int Numero) {
+		
+		if(Numero == 0) {
+			return "Clase Basic";
+			
+		}
+		
+		else if (Numero == 1) {
+			return "Clase A";
+			
+		}
+		
+		else if (Numero == 2) {
+			return "Clase B";
+			
+		}
+		
+		else if (Numero == 3) {
+			return "Clase C";
+			
+		}
+		
+		else if (Numero == 4) {
+			return "Clase D";
+			
+		}
+		
+		else {
+			return "Clase E";
+		}
+		
+		
 	}
 
 	public void añadir_Sprites() {
@@ -135,13 +242,32 @@ public class SpaceInvaders extends Canvas {
 	public void notificar_perdedor() 
 	{
 		mensaje = "GAME OVER";
+		nivel = 1;
+		puntaje = 0;
 		tecla_no_pulsada = true;
+		num_aliens = 8;
+		inicializarHileras();	
+		establecerHileraActual();		
+		añadir_Sprites(); 
+		
+		if(disparo.isPlaying()) {
+			disparo.stop();
+		}
 	}
 
 	public void notificar_ganador() 
 	{
 		mensaje = "LEVEL COMPLETED";
+		nivel++;
+		puntaje += 1000;
 		tecla_no_pulsada = true;
+		num_aliens = 8;
+		inicializarHileras();	
+		establecerHileraActual();		
+		añadir_Sprites(); 
+		if(disparo.isPlaying()) {
+			disparo.stop();
+		}
 	}
 
 	public void añadir_misil() {
@@ -168,17 +294,70 @@ public class SpaceInvaders extends Canvas {
 			Graphics2D G2D = (Graphics2D) buffer.getDrawGraphics();
 			G2D.setColor(Color.black);
 			G2D.fillRect(0,0,800,600);
-
+			fondo.dibujar_graficos(G2D);
+			G2D.setFont(informacion);
+			G2D.setColor(Color.white);
+			G2D.drawString("Hilera Actual: ", 10, 20);
+			G2D.setColor(Color.red);
+			G2D.drawString(this.establecerMensajeHilera(this.numeroHileraActual), 100, 20);
+			G2D.setColor(Color.white);
+			G2D.drawString("Hilera Siguiente: ", 200, 20);
+			G2D.setColor(Color.red);
+			G2D.drawString(this.establecerMensajeHilera(this.numeroHileraSiguiente), 320, 20);
+			G2D.setColor(Color.white);
+			G2D.drawString("Nivel Actual: ", 420, 20);
+			G2D.setColor(Color.red);
+			String nivelS = String.valueOf(nivel);
+			G2D.drawString(nivelS, 510, 20);
+			G2D.setColor(Color.white);
+			G2D.drawString("Puntaje: ", 560, 20);
+			G2D.setColor(Color.red);
+			String puntajeS = String.valueOf(puntaje);
+			G2D.drawString(puntajeS, 630, 20);
+			
+			if(titulo) {
+				G2D.setColor(Color.red);
+				G2D.setFont(gameScreen);
+				int width = G2D.getFontMetrics().stringWidth("Space Invaders");
+				G2D.drawString("Space Invaders",(800 / 2) - (width / 2),600 / 2);
+			}
+			
+			
 			if (!tecla_no_pulsada) 
 			{
+				titulo = false;
 				hileraActual.GenerarMovimientoColumnas(valor);
 			}
 			
 			
 			hileraActual.DibujarHileras(G2D);
 			
+			hojaSpritesE = new SpriteSheet(spriteExplosion);
 			
-			if(contadorCambio == 150) {
+			if(Explosion) {
+				
+				if(contadorSprites == 2) {
+					
+					explosion = hojaSpritesE.grabImage(contadorExplosion, 1, 100, 100);
+					G2D.drawImage(explosion,(int)this.coorXE,(int)this.coorYE,null);
+					contadorSprites = 0;
+					
+					if(contadorExplosion == 4) {
+						contadorExplosion = 1;
+						Explosion = false;
+					}
+					else {
+						contadorExplosion++;
+					}
+				}	
+				
+				contadorSprites++;
+				
+				
+			}
+			
+			
+			if(contadorCambio == 100) {
 				
 				hileraActual.GenerarIntercambioJefe(this);
 				contadorCambio = 0;
@@ -200,13 +379,24 @@ public class SpaceInvaders extends Canvas {
 			{	
 				hileraActual.GenerarMovimientoFilas();
 				alcanzado_limite = false;
+				
+				if (beepboop) {
+					beepboop = false;
+					boop.play();
+				} else {
+					beepboop = true;
+					beep.play();
+				}
 			}
 
 			if (tecla_no_pulsada) 
 			{
+				G2D.setColor(Color.red);
+				G2D.setFont(gameScreen);
+				int width = G2D.getFontMetrics().stringWidth(mensaje);
+				G2D.drawString(mensaje,(800 / 2) - (width / 2),600 / 2);
 				G2D.setColor(Color.white);
-				G2D.drawString(mensaje,(800-G2D.getFontMetrics().stringWidth(mensaje))/2,250);
-				G2D.drawString("Pulse una tecla para continuar",300,400);
+				G2D.drawString("Pulse una tecla para continuar",200,400);
 			}
 
 			G2D.dispose();
@@ -223,6 +413,10 @@ public class SpaceInvaders extends Canvas {
 
 			if(disparado) 
 			{
+				if(!disparo.isPlaying()) {
+					disparo.play();
+				}
+				
 				añadir_misil();
 			}
 

@@ -34,7 +34,9 @@ public class Misil extends Graficos {
 		{
 			if(grafico.getJefe() && grafico.getResistenciaJefe() == 1 && juego.hileraActual.getID() != 3
 					&& juego.hileraActual.getID() != 4 && juego.hileraActual.getID() != 5) {
-			
+				
+				juego.num_aliens = 0;
+				juego.puntaje += 800;
 				juego.notificar_ganador();
 				
 			}
@@ -42,6 +44,7 @@ public class Misil extends Graficos {
 			else if(grafico.getJefe() && grafico.getResistenciaJefe() == 1 && (juego.hileraActual.getID() == 3 
 					|| juego.hileraActual.getID() == 4 || juego.hileraActual.getID() == 5)) {
 				
+				juego.puntaje += 800;
 				juego.lista_eliminados.add(grafico);
 				juego.hileraActual.getLista().EliminarLista(this);
 				juego.hileraActual.DescontarNumeroAliens(juego);
@@ -63,6 +66,7 @@ public class Misil extends Graficos {
 					
 					if(grafico.getResistenciaAlien() == 1) {
 						
+						juego.puntaje += 500;
 						juego.lista_eliminados.add(grafico);
 						juego.hileraActual.getLista().EliminarLista(this);
 						juego.hileraActual.DescontarNumeroAliens(juego);
@@ -81,6 +85,7 @@ public class Misil extends Graficos {
 				
 				else {
 					
+					juego.puntaje += 500;
 					juego.lista_eliminados.add(grafico);
 					juego.hileraActual.getLista().EliminarLista(this);
 					juego.hileraActual.DescontarNumeroAliens(juego);

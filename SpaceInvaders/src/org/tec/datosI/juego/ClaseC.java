@@ -9,12 +9,14 @@ import org.tec.datosI.graficos.Graficos;
 import org.tec.datosI.listasEnlazadas.ListaCircular;
 import org.tec.datosI.listasEnlazadas.ListaGeneral;
 import org.tec.datosI.listasEnlazadas.NodoLista;
+import org.tec.datosI.sound.Sound;
 
 public class ClaseC  extends HileraEnemigos{
 	
 	private int ID = 3;
 	private ListaGeneral<Graficos> listaClaseC = new ListaCircular<Graficos>();
 	private Random posicionJefe = new Random(System.currentTimeMillis());
+	private Sound sonidoExplosion =  new Sound("/org/tec/datosI/sonidos/explosion.wav");
 
 	@Override
 	public void CrearHilera(Graficos Nave, String Alien, String Jefe, SpaceInvaders Juego) {
@@ -167,6 +169,14 @@ public class ClaseC  extends HileraEnemigos{
 				
 				if(grafico.getID() == actual.getValor().getID()) {
 					
+					Juego.coorXE = actual.getValor().columna;
+					Juego.coorYE = actual.getValor().fila;
+					Juego.Explosion = true;
+					
+					if(!sonidoExplosion.isPlaying()) {
+						sonidoExplosion.play();
+					}
+					
 					if(Juego.num_aliens == 0) {
 						this.getLista().EliminarLista(grafico);
 					}
@@ -306,6 +316,12 @@ public class ClaseC  extends HileraEnemigos{
 	public void GenerarMovimientoReloj() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Graficos getReferenciaJefe() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
